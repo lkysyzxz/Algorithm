@@ -1,0 +1,99 @@
+/*堆的性质	   :根节点总比子节点"大"(最大堆)
+  建堆思路	   :从叶子节点的上一层(size/2)开始逐步回退到1，对每一层进行调整 直到调整到底层
+				 for i = size/2 down to 1 
+					BuildHeap(arr,i,size);   
+  BuildHeap细节 :  
+				  left    = root*2;
+				  right   = root*2+1;
+				  largest = root;
+				  if arr.left  > arr.largest
+					 largest=left;
+				  if arr.right > arr.largest
+					 largest=right;
+				  swap arr[root] , arr[largest]
+				  if largest == right
+					  BuildHeap(arr,right,size);
+				  else
+					  BuildHeap(arr,left,size);
+  HeapSort思路  :从尾部开始 交换头尾，然后做一次完整的堆调整
+					
+  HeapSort细节  :
+				 for i = size down to 1
+					swap arr.i arr.1
+					for j=size/2 down to 1
+						BuildHeap(arr,j,size);
+				  */
+
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int A[15] = {0, 4, 7, 2, 43, 98, 1, 4, 6, 2, 3, 5, 7, 9, 0};
+int node[15];
+
+//循环建堆
+bool BuildHeap(int arr[], int root, int size)
+{
+	//节点属性
+	int left;
+	int right;
+	int largest;
+	while (root <= size/2)
+	{
+		left = root << 1;
+		right=(root << 1) | 1;
+		largest = root;
+		if (left <= size&&arr[largest] < arr[left])
+			largest = left;
+		if (right <= size&&arr[largest] < arr[right])
+			largest = right;
+
+		swap(arr[largest], arr[root]);
+
+		if (largest == right)//循环进入下一层
+			root = right;
+		else
+			root = left;
+	}
+	return true;
+}
+
+//递归建堆
+bool buildHeap(int arr[], int root, int size)
+{
+	int left = root << 1;
+	int right=(root << 1) | 1;
+	int largest = root;
+	if (right > size)
+		return false;
+	if (arr[largest] < arr[left])
+		largest = left;
+	if (arr[largest] < arr[right])
+		largest = right;
+	swap(arr[largest], arr[root]);
+	if (largest == right)
+		buildHeap(arr, right, size);
+	else
+		buildHeap(arr, left, size);
+}
+bool HeapSort(int arr[], int begin, int end)
+{
+	for (int i = end; i >= 1; i--)
+	{	
+		swap(arr[begin], arr[i]);
+		for (int j = end / 2; j >= 1; j--)
+			BuildHeap(arr, j, end-begin+1);
+	}
+	return true;
+}
+int main()
+{
+	fill(node, node + 15, 0);
+	int size = 14;
+	for (int i = size / 2; i >=1; i--)
+		BuildHeap(A, i, size);
+	HeapSort(A, 1,size);
+	return 0;
+}
